@@ -13,15 +13,13 @@ if not GROQ_KEY:
     raise EnvironmentError("GROQ_API_KEY environment variable is required")
 
 
+GROQ_MODEL_AGENT   = "meta-llama/llama-4-scout-17b-16e-instruct"  # json_schema ✓, fast
+GROQ_MODEL_QUALITY = "openai/gpt-oss-120b"                         # json_schema ✓, highest quality
+
 def get_llm(fast: bool = True):
-    """Returns ChatGroq for fast tasks, ChatAnthropic for complex ones."""
-    if fast:
-        return ChatGroq(
-            model="llama-3.3-70b-versatile",
-            api_key=GROQ_KEY,
-        )
-    # Claude for complex visual reasoning (screenshots)
-    return ChatAnthropic(model="claude-sonnet-4-6")
+    """Returns ChatGroq with a model that supports json_schema (required by browser-use)."""
+    model = GROQ_MODEL_AGENT if fast else GROQ_MODEL_QUALITY
+    return ChatGroq(model=model, api_key=GROQ_KEY)
 
 
 def get_gulf_profile() -> BrowserProfile:
